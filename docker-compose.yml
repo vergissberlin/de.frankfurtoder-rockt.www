@@ -1,20 +1,22 @@
-version: '3.6'
-
 services:
   app:
     image: ghcr.io/vergissberlin/frankfurtoder-rockt.de:main
-    container_name: ${COMPOSE_PROJECT_NAME}-httpd
+    container_name: ${COMPOSE_PROJECT_NAME:-frankfurtoder-rockt}-httpd
     labels:
       - traefik.enable=true
-      - traefik.docker.network=${NETWORK}
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(${DOMAINS})
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=https
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.tls=true
-      - traefik.http.routers.${COMPOSE_PROJECT_NAME}.tls.certresolver=letsencrypt
-      - traefik.http.services.${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=${PORT}
+      - traefik.docker.network=${NETWORK:-frankfurtoder-rockt_default}
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-frankfurtoder-rockt}.rule=Host(${DOMAINS:-localhost})
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-frankfurtoder-rockt}.entrypoints=https
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-frankfurtoder-rockt}.tls=true
+      - traefik.http.routers.${COMPOSE_PROJECT_NAME:-frankfurtoder-rockt}.tls.certresolver=letsencrypt
+      - traefik.http.services.${COMPOSE_PROJECT_NAME:-frankfurtoder-rockt}.loadbalancer.server.port=${PORT:-8080}
+    ports:
+      - "${PORT:-8080}:8080"
     restart: unless-stopped
+    networks:
+      - default
 
 networks:
   default:
-    external:
-      name: ${NETWORK}
+    name: ${NETWORK:-frankfurtoder-rockt_default}
+    external: ${NETWORK:+true}

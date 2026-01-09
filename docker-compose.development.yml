@@ -1,5 +1,3 @@
-version: '3.6'
-
 services:
   app:
     image: ghcr.io/vergissberlin/frankfurtoder-rockt.de:main
